@@ -3,7 +3,7 @@ namespace Imageprocessing.Infrastructure.Data
     public class ImageJob
     {
         public Guid Id { get; set; }
-        public ImageStatus status { set; get; }
+        public ImageStatus Status { set; get; }
         public string? FailureReason { set; get; }
 
         // original file info

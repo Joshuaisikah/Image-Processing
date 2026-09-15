@@ -14,7 +14,7 @@ namespace Imageprocessing.Infrastructure.Data
             modelBuilder.Entity<ImageJob>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.status).IsRequired().HasConversion<string>();
+                entity.Property(e => e.Status).IsRequired().HasConversion<string>();
                 entity.Property(e => e.OriginalFileName).IsRequired().HasMaxLength(255);
                 entity.Property(e => e.ContentType).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.OriginalPath).IsRequired().HasMaxLength(500);
