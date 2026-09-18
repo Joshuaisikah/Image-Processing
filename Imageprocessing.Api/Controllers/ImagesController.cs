@@ -37,5 +37,20 @@ return result.IsSuccess ? Ok(result.Value) : result.Error switch
     ImageServiceError.NotFound => NotFound(),
     _ => StatusCode(StatusCodes.Status500InternalServerError, "unexpected error occurred"),
 };
-}}
+
+}
+
+ [HttpGet("{id}/thumbnails/{size}")]
+    public async Task<IActionResult> GetThumbnail(Guid id, string size, CancellationToken ct)
+    {
+        var result = await  _imageService.GetThumbnailPathAsync(id, size, ct);
+
+        if (!result.IsSuccess)
+        {
+            return NotFound();
+        }
+
+        return PhysicalFile(result.Value!, "image/jpeg");
+    }
+}
 

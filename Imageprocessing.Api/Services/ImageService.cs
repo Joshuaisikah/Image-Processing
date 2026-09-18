@@ -103,6 +103,11 @@ namespace Imageprocessing.Api.Services
                     "Error saving file to disk"
                 );
             }
+        //lets enqueue the image for processing
+var queued = _imageProcessingQueue.TryEnqueue(imageId);
+        if(!queued){
+_logger.LogWarning("Failed to enqueue image job {ImageId} for processing.", imageId);
+               }
             return ImageServiceResult<Guid>.Success(imageId);
         }
 
@@ -131,6 +136,37 @@ namespace Imageprocessing.Api.Services
                     CompletedAt = imageJob.CompletedAt,
                 }
             );
+        }
+
+        public async Task<ImageServiceResult<string>> GetThumbnailPathAsync(
+            Guid id,
+            string size,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var imageJob = await _dbContext
+                .ImageJobs.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            if (imageJob == null || imageJob.Status != ImageStatus.Completed)
+            {
+                return ImageServiceResult<string>.Failure(
+                    ImageServiceError.NotFound,
+                    $"Image not found or not completed with id {id}"
+                );
+            }
+            var thumbnailPath = ThumbnailPathHelper.GetPath(
+                Path.Combine(_webHostEnvironment.ContentRootPath, "uploads"),
+                id,
+                size
+            );
+            if (!File.Exists(thumbnailPath))
+            {
+                return ImageServiceResult<string>.Failure(
+                    ImageServiceError.NotFound,
+                    $"Thumbnail not found for image id {id} and size {size}"
+                );
+            }
+            return ImageServiceResult<string>.Success(thumbnailPath);
         }
     }
 }
