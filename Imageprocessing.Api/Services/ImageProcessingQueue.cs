@@ -26,5 +26,10 @@ namespace Imageprocessing.Api.Services
         {
             return _channel.Reader.ReadAllAsync(cancellationToken);
         }
+
+        public async Task EnqueueAsync(Guid jobId, CancellationToken cancellationToken = default)
+        {
+            await _channel.Writer.WriteAsync(jobId, cancellationToken);
+        }
     }
 }

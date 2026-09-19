@@ -8,5 +8,6 @@ namespace Imageprocessing.Api.Services
         bool TryEnqueue(Guid jobId);
 
         IAsyncEnumerable<Guid> ReadAllAsync(CancellationToken cancellationToken = default);
+        Task EnqueueAsync(Guid jobId, CancellationToken cancellationToken = default);
     }
 }
